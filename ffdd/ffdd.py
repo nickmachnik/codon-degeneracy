@@ -19,7 +19,7 @@ def _truncate(seq: str):
                      no start codon was found.
     """
     seq = seq.upper()
-    for start in range(0, len(seq) - 2, 3):
+    for start in range(0, len(seq) - 2):
         codon = seq[start:start+3]
         if codon == "ATG":
             return seq[start:]
@@ -74,6 +74,20 @@ def _x_fold_degenerate_from_codon_table(x: int, table: str):
         if len(codons) == x:
             x_fold_table[aa] = codons
     return x_fold_table
+
+
+def _triplet(seq: str, i: int):
+    """Return the ith triplet in a sequence.
+
+    Args:
+        seq (str): Sequence
+        i (int): 0-based index of the target triplet.
+
+    Returns:
+        str: The target triplet.
+    """
+    start = i * 3
+    return seq[start:start+3]
 
 
 def _get_aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
