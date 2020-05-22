@@ -53,9 +53,9 @@ def _align(a: Protein, b: Protein):
     return local_pairwise_align_ssw(a, b, substitution_matrix=blosum50)
 
 
-def _get_aligned_ffds(a: str, b: str, table="Standard"):
+def _get_aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
     proteins = []
-    for s in (a, b):
+    for s, table in zip([a, table_a], [b, table_b]):
         ts = _truncate(s)
         if not ts:
             raise ValueError("DNA sequence without ATG codon provided!")
