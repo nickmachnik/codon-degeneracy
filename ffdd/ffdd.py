@@ -51,3 +51,17 @@ def _align(a: Protein, b: Protein):
         skbio.alignment.TabularMSA: skbio alignment table
     """
     return local_pairwise_align_ssw(a, b, substitution_matrix=blosum50)
+
+
+def _get_aligned_ffds(a: str, b: str, table="Standard"):
+    proteins = []
+    for s in (a, b):
+        ts = _truncate(s)
+        if not ts:
+            raise ValueError("DNA sequence without ATG codon provided!")
+        else:
+            proteins.append(_translate(ts, table))
+    alignment = _align(*proteins)
+    unaligned_a_start = alignment[2][0][0]
+    unaligned_b_start = alignment[2][1][0]
+
