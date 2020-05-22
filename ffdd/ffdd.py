@@ -2,9 +2,9 @@
 
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
-# from skbio.alignment import local_pairwise_align_ssw as aln
+from skbio.alignment import local_pairwise_align_ssw
 from skbio.sequence import Protein
-# from skbio.alignment._pairwise import blosum50
+from skbio.alignment._pairwise import blosum50
 
 
 def _truncate(seq: str):
@@ -38,3 +38,16 @@ def _translate(seq: str, table="Standard"):
         skbio.sequence.Protein: Protein object with the translated sequence.
     """
     return Protein(str(Seq(seq, IUPAC.unambiguous_dna).translate(table=table)))
+
+
+def _align(a: Protein, b: Protein):
+    """Wraps the skbio pairwise ssw alilgner.
+
+    Args:
+        a (str): sequence a
+        b (str): sequence b
+
+    Returns:
+        skbio.alignment.TabularMSA: skbio alignment table
+    """
+    return local_pairwise_align_ssw(a, b, substitution_matrix=blosum50)
