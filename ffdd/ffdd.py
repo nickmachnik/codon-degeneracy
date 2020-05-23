@@ -64,11 +64,11 @@ def _x_fold_degenerate_from_codon_table(x: int, table: str):
     Returns:
         dict: amino acids (keys) and their x codons (values)
     """
-    codon_table = unambiguous_dna_by_name[str].forward_table
+    codon_table = unambiguous_dna_by_name[table].forward_table
     reverse_table = {}
     for codon, aa in codon_table.items():
         reverse_table.setdefault(aa, [])
-        reverse_table[aa].append[codon]
+        reverse_table[aa].append(codon)
     x_fold_table = {}
     for aa, codons in reverse_table.items():
         if len(codons) == x:
@@ -95,7 +95,7 @@ def _aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
     from a protein sequence alignment of two coding DNA sequences.
 
     Args:
-        a (str): codding DNA sequence a
+        a (str): coding DNA sequence a
         b (str): coding DNA sequence b
         table_a (str, optional): NCBI table name as used in Bio.Data.CodonTable
         table_b (str, optional): NCBI table name as used in Bio.Data.CodonTable
@@ -108,21 +108,78 @@ def _aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
                     an ATG start codon.
     """
     proteins = []
-    for s, table in zip([a, table_a], [b, table_b]):
+    truncated = []
+    for s, table in [[a, table_a], [b, table_b]]:
         ts = _truncate(s)
         if not ts:
             raise ValueError("DNA sequence without ATG codon provided!")
         else:
+            truncated.append(ts)
             proteins.append(_translate(ts, table))
     alignment = _align(*proteins)
+
     # shorten the input sequences to the aligned subsequences
-    a = a[alignment[2][0][0]*3:alignment[2][0][1]*3]
-    b = b[alignment[2][1][0]*3:alignment[2][1][1]*3]
+    a = truncated[0][alignment[2][0][0]*3:]
+    b = truncated[1][alignment[2][1][0]*3:]
+
     degenerate_aa = set(
         _x_fold_degenerate_from_codon_table(4, table_a)).intersection(
             set(_x_fold_degenerate_from_codon_table(4, table_b)))
 
     # iterate over the aligned sequences
-    for i, (ca, cb) in enumerate(zip(*alignment[0])):
+    for i, (ca, cb) in enumerate(zip(
+        str(alignment[0][0]), str(alignment[0][1]))
+    ):
         if ca == cb and ca in degenerate_aa:
-            yield _triplet[a, i], _triplet[b, i]
+            yield _triplet(a, i), _triplet(b, i)
+
+
+def substitution_rate_at_ffds(
+    a: str, b: str, table_a="Standard", table_b="Standard"
+) -> ((int, int), [str, str]):
+    """Estimates the rate of neutral substitutions by counting
+    the number of substitutions at four-fold degenerate sites.
+    sites.
+
+    Args:
+        a (str): coding DNA sequence a
+        b (str): coding DNA sequence b
+        table_a (str, optional): NCBI table name as used in Bio.Data.CodonTable
+        table_b (str, optional): NCBI table name as used in Bio.Data.CodonTable
+
+    Returns:
+        (int, int): number of substitutions, number of sites
+        [str, str]: the selected ORFs of the input sequences
+    """
+    proteins = []
+    truncated = []
+    for s, table in [[a, table_a], [b, table_b]]:
+        ts = _truncate(s)
+        if not ts:
+            raise ValueError("DNA sequence without ATG codon provided!")
+        else:
+            truncated.append(ts)
+            proteins.append(_translate(ts, table))
+    alignment = _align(*proteins)
+
+    # shorten the input sequences to the aligned subsequences
+    a = truncated[0][alignment[2][0][0]*3:]
+    b = truncated[1][alignment[2][1][0]*3:]
+
+    degenerate_aa = set(
+        _x_fold_degenerate_from_codon_table(4, table_a)).intersection(
+            set(_x_fold_degenerate_from_codon_table(4, table_b)))
+
+    n_sites = 0
+    n_sub = 0
+    # iterate over the aligned sequences
+    for i, (ca, cb) in enumerate(zip(
+        str(alignment[0][0]), str(alignment[0][1]))
+    ):
+        if ca == cb and ca in degenerate_aa:
+            tra, trb = _triplet(a, i), _triplet(b, i)
+            n_sites += 1
+            if tra[2] != trb[2]:
+                n_sub += 1
+
+    return (n_sub, n_sites), truncated
