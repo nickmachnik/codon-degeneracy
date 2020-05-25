@@ -64,12 +64,14 @@ def _hamming_distance(a, b):
     return distance, differential_sites
 
 
-def _site_degeneracy(codons):
+def _site_degeneracy(codons, min_x: None):
     """Group codons by site for which they are degenerate.
 
     Args:
         codons (array_like): array of base triplets, e.g. codons for
-                             a particular amino acid
+                             a particular amino acid.
+        filter_n (int): Filters out groups of degenerate codons that
+                        have less than min_x elements.
 
     Returns:
         dict: mapping between each degenerate site and the groups of
@@ -93,17 +95,23 @@ def _site_degeneracy(codons):
                 resolved.append(set([a]))
         return resolved
 
-    pairs2sites = {}
     sites2pairs = {}
     for a, b in combinations(codons, 2):
         distance, sites = _hamming_distance(a, b)
         if distance == 1:
-            pairs2sites[(a, b)] = sites[0]
             sites2pairs.setdefault(sites[0], set())
             sites2pairs[sites[0]].add((a, b))
 
-    return {site: resolve_pairs(pairs)
-            for site, pairs in sites2pairs.items()}
+    if min_x is None:
+        res = {site: resolve_pairs(pairs)
+               for site, pairs in sites2pairs.items()}
+    else:
+        res = {}
+        for site, pairs in sites2pairs.items():
+            resolved = [s for s in resolve_pairs(pairs) if len(s) >= min_x]
+            if resolved:
+                res[site] = resolved
+    return res
 
 
 def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
@@ -115,7 +123,9 @@ def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
         table (str, optional): NCBI table name as used in Bio.Data.CodonTable
 
     Returns:
-        dict: amino acids (keys) and their x codons (values)
+        dict: maps each amino acid (keys) to a dict that specifies
+              the degenerate codons for each site.
+
     """
     codon_table = unambiguous_dna_by_name[table].forward_table
     reverse_table = {}
@@ -125,7 +135,11 @@ def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
     x_fold_table = {}
     for aa, codons in reverse_table.items():
         if len(codons) >= x:
-            x_fold_table[aa] = codons
+            # filter out less than x fold degenerate
+            # sites and codons
+            degeneracy = {}
+            for site, codons in _site_degeneracy(codons).items():
+
     return x_fold_table
 
 
