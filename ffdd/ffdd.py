@@ -94,8 +94,8 @@ def _site_degeneracy(codons):
             sites2pairs[sites[0]].add((a, b))
 
     # resolve pairs
-    for site, pairs in sites2pairs.items():
-        yield site, resolve_pairs(pairs)
+    return {site: resolve_pairs(pairs)
+            for site, pairs in sites2pairs.items()}
 
 
 def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):

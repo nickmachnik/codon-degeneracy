@@ -6,11 +6,7 @@ import ffdd.ffdd as ffdd
 
 class Tests(unittest.TestCase):
     def test_site_degeneracyy(self):
-        res = {
-            site: groups
-            for site, groups
-            in ffdd._site_degeneracy(
-                ["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"])}
+        res = ffdd._site_degeneracy(["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"])
 
         self.assertTrue(all(i in res for i in [2, 0]))
         self.assertTrue(all(e in res[2] for e in [
