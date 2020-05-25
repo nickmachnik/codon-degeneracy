@@ -4,7 +4,7 @@ This python package provides routines for the extraction of [degenerate sites](h
 
 ## Dependencies
 
-This code uses [biopython](https://biopython.org/) and [scikit-bio](http://scikit-bio.org/) internally.
+This code uses [biopython](https://biopython.org/) and [scikit-bio](http://scikit-bio.org/) internally. In order to installl via pip, `numpy` has to be installed.
 
 ## Installing
 
@@ -30,6 +30,7 @@ python -m unittest
 ## Getting started
 
 One of the main features of the package is the counting of neutral substitutions at four fold degenerate sites.
+This is best done with known orthologue pairs between species.
 `substitution_rate_at_ffds` provides that functionality and is easy to use like so:
 ```python
 from codon_degeneracy import substitution_rate_at_ffds as nsr
@@ -39,7 +40,7 @@ seq_a = (
 seq_b = (
     "ATGACCACAGTAAATCTCCTACTTATAATCATACCCACAT"
     "TAGCCGCCATAGCATTTCTCACACTCGTTGAACGA")
-(number_of_substitutiuons, number_of_sites), (orf_a, orf_b) = nsr(
+(number_of_substitutions, number_of_sites), (orf_a, orf_b) = nsr(
     # the input sequences
     seq_a,
     seq_b,
@@ -47,6 +48,11 @@ seq_b = (
     "Vertebrate Mitochondrial",
     "Vertebrate Mitochondrial")
 ```
+The ORFs returned are there for sanity checks. The default behaviour is to select the first ATG codon
+as start.
+
+> NOTE: The rates of neutral substitutions reported by this function are merely a lower bound,
+> as they do not include the possibility of multiple substitutions per site.
 
 There are more useful and well documented functions under the hood, which I enourage to explore by browsing the code.
 
