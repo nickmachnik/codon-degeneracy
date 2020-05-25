@@ -65,7 +65,16 @@ def _hamming_distance(a, b):
 
 
 def _site_degeneracy(codons):
+    """Group codons by site for which they are degenerate.
 
+    Args:
+        codons (array_like): array of base triplets, e.g. codons for 
+                             a particular amino acid
+
+    Returns:
+        dict: mapping between each degenerate site and the groups of 
+              codons which are degenerate at that site.
+    """
     def resolve_pairs(pairs):
         codons = set()
         for a, b in pairs:
@@ -93,7 +102,6 @@ def _site_degeneracy(codons):
             sites2pairs.setdefault(sites[0], set())
             sites2pairs[sites[0]].add((a, b))
 
-    # resolve pairs
     return {site: resolve_pairs(pairs)
             for site, pairs in sites2pairs.items()}
 
