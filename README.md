@@ -27,6 +27,29 @@ cd [TARGET DIR]
 python -m unittest
 ```
 
+## Getting started
+
+One of the main features of the package is the counting of neutral substitutions at four fold degenerate sites.
+`substitution_rate_at_ffds` provides that functionality and is easy to use like so:
+```python
+from site_degeneracy import substitution_rate_at_ffds as nsr
+seq_a = (
+    "ATACCCATGGCCAACCTCCTACTCCTCATTGTACCCATTC"
+    "TAATCGCAATGGCATTCCTAATGCTTACCGAACGA")
+seq_b = (
+    "ATGACCACAGTAAATCTCCTACTTATAATCATACCCACAT"
+    "TAGCCGCCATAGCATTTCTCACACTCGTTGAACGA")
+(number_of_substitutiuons, number_of_sites), (orf_a, orf_b) = nsr(
+    # the input sequences
+    seq_a,
+    seq_b,
+    # NCBI codon table names as used in Bio.Data.CodonTable
+    "Vertebrate Mitochondrial",
+    "Vertebrate Mitochondrial")
+```
+
+There are more useful and well documented functions under the hood, which I enourage to explore by browsing the code.
+
 ## License
 
 MIT license ([LICENSE](LICENSE.txt) or https://opensource.org/licenses/MIT)
