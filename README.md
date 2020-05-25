@@ -1,4 +1,6 @@
+
 # codon-degeneracy
+![Python application](https://github.com/nickmachnik/codon-degeneracy/workflows/Python%20application/badge.svg)
 
 This python package provides routines for the extraction of [degenerate sites](https://en.wikipedia.org/wiki/Codon_degeneracy) from sequences and alignments. The latter is particularly useful for estimations of rates of neutral evolution.
 
