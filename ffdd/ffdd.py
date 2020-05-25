@@ -6,6 +6,7 @@ from Bio.Data.CodonTable import unambiguous_dna_by_name
 from skbio.alignment import local_pairwise_align_ssw
 from skbio.sequence import Protein
 from skbio.alignment._pairwise import blosum50
+from itertools import combinations
 
 
 def _truncate(seq: str):
@@ -53,7 +54,51 @@ def _align(a: Protein, b: Protein):
     return local_pairwise_align_ssw(a, b, substitution_matrix=blosum50)
 
 
-def _x_fold_degenerate_from_codon_table(x: int, table: str):
+def _hamming_distance(a, b):
+    distance = 0
+    differential_sites = []
+    for p in range(len(a)):
+        if a[p] != b[p]:
+            distance += 1
+            differential_sites.append(p)
+    return distance, differential_sites
+
+
+def _site_degeneracy(codons):
+
+    def resolve_pairs(pairs):
+        codons = set()
+        for a, b in pairs:
+            codons.add(a)
+            codons.add(b)
+
+        resolved = [set([codons.pop()])]
+        for a in codons:
+            added = False
+            for group in resolved:
+                if any((a, b) in pairs or (b, a) in pairs for b in group):
+                    group.add(a)
+                    added = True
+                    break
+            if not added:
+                resolved.append(set([a]))
+        return resolved
+
+    pairs2sites = {}
+    sites2pairs = {}
+    for a, b in combinations(codons, 2):
+        distance, sites = _hamming_distance(a, b)
+        if distance == 1:
+            pairs2sites[(a, b)] = sites[0]
+            sites2pairs.setdefault(sites[0], set())
+            sites2pairs[sites[0]].add((a, b))
+
+    # resolve pairs
+    for site, pairs in sites2pairs.items():
+        yield site, resolve_pairs(pairs)
+
+
+def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
     """Extracts amino acids that are encoded by x
     different codons from an NCBI codon table.
 
@@ -71,7 +116,7 @@ def _x_fold_degenerate_from_codon_table(x: int, table: str):
         reverse_table[aa].append(codon)
     x_fold_table = {}
     for aa, codons in reverse_table.items():
-        if len(codons) == x:
+        if len(codons) >= x:
             x_fold_table[aa] = codons
     return x_fold_table
 
@@ -123,8 +168,8 @@ def _aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
     b = truncated[1][alignment[2][1][0]*3:]
 
     degenerate_aa = set(
-        _x_fold_degenerate_from_codon_table(4, table_a)).intersection(
-            set(_x_fold_degenerate_from_codon_table(4, table_b)))
+        _x_fold_degenerate_aa_from_codon_table(4, table_a)).intersection(
+            set(_x_fold_degenerate_aa_from_codon_table(4, table_b)))
 
     # iterate over the aligned sequences
     for i, (ca, cb) in enumerate(zip(
@@ -167,8 +212,8 @@ def substitution_rate_at_ffds(
     b = truncated[1][alignment[2][1][0]*3:]
 
     degenerate_aa = set(
-        _x_fold_degenerate_from_codon_table(4, table_a)).intersection(
-            set(_x_fold_degenerate_from_codon_table(4, table_b)))
+        _x_fold_degenerate_aa_from_codon_table(4, table_a)).intersection(
+            set(_x_fold_degenerate_aa_from_codon_table(4, table_b)))
 
     n_sites = 0
     n_sub = 0
