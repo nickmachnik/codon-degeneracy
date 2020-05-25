@@ -135,7 +135,9 @@ def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
     x_fold_table = {}
     for aa, codons in reverse_table.items():
         if len(codons) >= x:
-            x_fold_table[aa] = _site_degeneracy(codons)
+            degeneracy = _site_degeneracy(codons)
+            if degeneracy:
+                x_fold_table[aa] = degeneracy
     return x_fold_table
 
 
@@ -198,7 +200,7 @@ def _aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
 
 
 def substitution_rate_at_ffds(
-    a: str, b: str, table_a="Standard", table_b="Standard"
+    a: str, b: str, table_a="Standard", table_b=" Standard"
 ) -> ((int, int), [str, str]):
     """Estimates the rate of neutral substitutions by counting
     the number of substitutions at four-fold degenerate sites.
