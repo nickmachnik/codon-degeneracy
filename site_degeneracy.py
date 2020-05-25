@@ -135,11 +135,7 @@ def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
     x_fold_table = {}
     for aa, codons in reverse_table.items():
         if len(codons) >= x:
-            # filter out less than x fold degenerate
-            # sites and codons
-            degeneracy = {}
-            for site, codons in _site_degeneracy(codons).items():
-
+            x_fold_table[aa] = _site_degeneracy(codons)
     return x_fold_table
 
 
