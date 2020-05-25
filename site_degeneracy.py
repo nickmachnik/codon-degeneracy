@@ -64,14 +64,14 @@ def _hamming_distance(a, b):
     return distance, differential_sites
 
 
-def _site_degeneracy(codons, min_x: None):
+def _site_degeneracy(codons, min_x=None):
     """Group codons by site for which they are degenerate.
 
     Args:
         codons (array_like): array of base triplets, e.g. codons for
                              a particular amino acid.
-        filter_n (int): Filters out groups of degenerate codons that
-                        have less than min_x elements.
+        min_x (None, optional): Filters out groups of degenerate codons that
+                                have less than min_x elements.
 
     Returns:
         dict: mapping between each degenerate site and the groups of
@@ -135,7 +135,7 @@ def _x_fold_degenerate_aa_from_codon_table(x: int, table: str):
     x_fold_table = {}
     for aa, codons in reverse_table.items():
         if len(codons) >= x:
-            degeneracy = _site_degeneracy(codons)
+            degeneracy = _site_degeneracy(codons, x)
             if degeneracy:
                 x_fold_table[aa] = degeneracy
     return x_fold_table
