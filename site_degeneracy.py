@@ -243,8 +243,10 @@ def substitution_rate_at_ffds(
     ):
         if ca == cb and ca in degenerate_aa:
             tra, trb = _triplet(a, i), _triplet(b, i)
-            n_sites += 1
-            if tra[2] != trb[2]:
-                n_sub += 1
+            subs, locs = _hamming_distance(tra, trb)
+            # in exotic genetic codes it may be possible that
+            # a single aa has two four fold degenerate sites.
+            n_sites += max(subs, 1)
+            n_sub += subs
 
     return (n_sub, n_sites), truncated
