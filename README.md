@@ -4,7 +4,7 @@ This python package provides routines for the extraction of [degenerate sites](h
 
 ## Dependencies
 
-This code uses [biopython](https://biopython.org/) and [scikit-bio](http://scikit-bio.org/) internally. In order to installl via pip, `numpy` has to be installed.
+This code uses [biopython](https://biopython.org/) and [scikit-bio](http://scikit-bio.org/) internally. In order to installl via pip, [numpy](https://numpy.org/) has to be installed.
 
 ## Installing
 
