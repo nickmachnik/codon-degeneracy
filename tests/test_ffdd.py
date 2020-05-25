@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import unittest
-import site_degeneracy
+import codon_degeneracy
 
 
 class Tests(unittest.TestCase):
     def test_site_degeneracy(self):
-        res = site_degeneracy._site_degeneracy(["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"])
+        res = codon_degeneracy._site_degeneracy(["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"])
 
         self.assertTrue(all(i in res for i in [2, 0]))
         self.assertTrue(all(e in res[2] for e in [
@@ -22,7 +22,7 @@ class Tests(unittest.TestCase):
         seq_b = (
             "ATGACCACAGTAAATCTCCTACTTATAATCATACCCACAT"
             "TAGCCGCCATAGCATTTCTCACACTCGTTGAACGA")
-        subrate, _, = site_degeneracy.substitution_rate_at_ffds(
+        subrate, _, = codon_degeneracy.substitution_rate_at_ffds(
             seq_a, seq_b,
             "Vertebrate Mitochondrial", "Vertebrate Mitochondrial")
         self.assertEqual(subrate, (5, 10))

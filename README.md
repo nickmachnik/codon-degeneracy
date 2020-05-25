@@ -1,4 +1,4 @@
-# degenerate-sites
+# codon-degeneracy
 
 This python package provides routines for the extraction of [degenerate sites](https://en.wikipedia.org/wiki/Codon_degeneracy) from sequences and alignments. The latter is particularly useful for estimations of rates of neutral evolution.
 
@@ -32,7 +32,7 @@ python -m unittest
 One of the main features of the package is the counting of neutral substitutions at four fold degenerate sites.
 `substitution_rate_at_ffds` provides that functionality and is easy to use like so:
 ```python
-from site_degeneracy import substitution_rate_at_ffds as nsr
+from codon_degeneracy import substitution_rate_at_ffds as nsr
 seq_a = (
     "ATACCCATGGCCAACCTCCTACTCCTCATTGTACCCATTC"
     "TAATCGCAATGGCATTCCTAATGCTTACCGAACGA")
