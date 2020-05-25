@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 from Bio.Data.CodonTable import unambiguous_dna_by_name
 from skbio.alignment import local_pairwise_align_ssw
 from skbio.sequence import Protein
@@ -38,7 +37,7 @@ def _translate(seq: str, table="Standard"):
     Returns:
         skbio.sequence.Protein: Protein object with the translated sequence.
     """
-    return Protein(str(Seq(seq, IUPAC.unambiguous_dna).translate(table=table)))
+    return Protein(str(Seq(seq).translate(table=table)))
 
 
 def _align(a: Protein, b: Protein):
