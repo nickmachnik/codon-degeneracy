@@ -26,10 +26,8 @@ class CleanCommand(Command):
 setup(
     name='codon-degeneracy',
     version=__version__,
-    description=(
-        "Routines for the extraction of degenerate sides and calculation",
-        "of rates of neutral substitutions from sequences and alignments."
-        ),
+    description="""
+        Routines for the extraction of degenerate sides and estimation of numbers neutral substitutions from sequences and alignments.""",
     # long_description_content_type="text/markdown",
     url='https://github.com/nickmachnik/codon-degeneracy.git',
     setup_requires=[
