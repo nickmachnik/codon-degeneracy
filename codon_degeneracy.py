@@ -243,12 +243,17 @@ def substitution_rate_at_ffds(
 
     n_sites = 0
     n_sub = 0
+    offset_a, offset_b = 0, 0
     # iterate over the aligned sequences
     for i, (ca, cb) in enumerate(zip(
         str(alignment[0][0]), str(alignment[0][1]))
     ):
+        if ca == "-":
+            offset_a += 1
+        if cb == "-":
+            offset_b += 1
         if ca == cb and ca in degenerate_aa:
-            tra, trb = _triplet(a, i), _triplet(b, i)
+            tra, trb = _triplet(a, i - offset_a), _triplet(b, i - offset_b)
             subs, locs = _hamming_distance(tra, trb)
             # in exotic genetic codes it may be possible that
             # a single aa has two four fold degenerate sites.
