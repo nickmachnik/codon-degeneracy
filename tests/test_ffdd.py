@@ -21,7 +21,7 @@ class Tests(unittest.TestCase):
             "TAATCGCAATGGCATTCCTAATGCTTACCGAACGA")
         seq_b = (
             "ATGACCACAGTAAATCTCCTACTTATAATCATACCCACAT"
-            "TAGCCGCCATAGCATTTCTCACACTCGTTGAACGA")
+            "TAGCCGCCATAGCATTTCTCACACTCGTTGAACGAT")
         subrate, _, = codon_degeneracy.substitution_rate_at_ffds(
             seq_a, seq_b,
             "Vertebrate Mitochondrial", "Vertebrate Mitochondrial")
