@@ -205,12 +205,11 @@ def _aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
             yield _triplet(a, i), _triplet(b, i)
 
 
-def substitution_rate_at_ffds(
+def substitutions_per_ffds(
     a: str, b: str, table_a="Standard", table_b="Standard"
 ) -> ((int, int), [str, str]):
-    """Estimates the rate of neutral substitutions by counting
-    the number of substitutions at four-fold degenerate sites.
-    sites.
+    """Estimates the numbers of neutral substitutions per site by counting
+    the number of substitutions at four-fold degenerate sites sites.
 
     Args:
         a (str): coding DNA sequence a
