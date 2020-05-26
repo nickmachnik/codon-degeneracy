@@ -10,6 +10,8 @@ from itertools import combinations
 
 def _truncate(seq: str):
     """Removes the prefix before the first ATG.
+    and any trailing nucleotides that are not
+    part of a full codon.
 
     Args:
         seq (str): Nucleotide sequence to truncate
@@ -22,7 +24,12 @@ def _truncate(seq: str):
     for start in range(0, len(seq) - 2):
         codon = seq[start:start+3]
         if codon == "ATG":
-            return seq[start:]
+            res = seq[start:]
+            trailing_nuc = len(res) % 3
+            if trailing_nuc > 0:
+                return res[:-trailing_nuc]
+            else:
+                return res
 
 
 def _translate(seq: str, table="Standard"):
