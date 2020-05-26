@@ -53,7 +53,7 @@ seq_b = (
 The ORFs returned are there for sanity checks. The default behaviour is to select the first ATG codon
 as start.
 
-> NOTE: The rates of neutral substitutions reported by this function are merely a lower bound,
+> NOTE: The numbers of neutral substitutions per site reported by this function are merely a lower bound,
 > as they do not include the possibility of multiple substitutions per site.
 
 There are more useful and well documented functions under the hood, which I enourage to explore by browsing the code.
