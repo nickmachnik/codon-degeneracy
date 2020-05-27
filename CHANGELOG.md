@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [0.1.2]
+
+### Added
+
+- More thorough documentation on PyPI
+
 ## [0.1.1]
 
 ### Fixed
