@@ -23,12 +23,18 @@ class CleanCommand(Command):
             'rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info ./htmlcov')
 
 
+def read_file(filename):
+    with open(os.path.join(os.path.dirname(__file__), filename)) as file:
+        return file.read()
+
+
 setup(
     name='codon-degeneracy',
     version=__version__,
     description="""
         Routines for the extraction of degenerate sides and estimation of numbers neutral substitutions from sequences and alignments.""",
-    # long_description_content_type="text/markdown",
+    long_description=read_file('README.md'),
+    long_description_content_type='text/markdown',
     url='https://github.com/nickmachnik/codon-degeneracy.git',
     setup_requires=[
         'setuptools>=18.0',
