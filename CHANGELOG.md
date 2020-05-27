@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- More thorough documentation on PyPI
+- More thorough documentation
 
 ## [0.1.1]
 
