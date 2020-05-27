@@ -23,11 +23,6 @@ class CleanCommand(Command):
             'rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info ./htmlcov')
 
 
-def read_file(filename):
-    with open(os.path.join(os.path.dirname(__file__), filename)) as file:
-        return file.read()
-
-
 setup(
     name='codon-degeneracy',
     version=__version__,
