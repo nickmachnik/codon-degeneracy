@@ -28,7 +28,7 @@ setup(
     version=__version__,
     description="""
         Routines for the extraction of degenerate sides and estimation of numbers neutral substitutions from sequences and alignments.""",
-    long_description="https://github.com/nickmachnik/codon-degeneracy",
+    # long_description="https://github.com/nickmachnik/codon-degeneracy",
     # long_description=read_file('README.md'),
     # long_description_content_type='text/markdown',
     url='https://github.com/nickmachnik/codon-degeneracy.git',
