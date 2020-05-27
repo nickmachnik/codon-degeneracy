@@ -236,9 +236,20 @@ def substitutions_per_ffds(
     a = truncated[0][alignment[2][0][0]*3:]
     b = truncated[1][alignment[2][1][0]*3:]
 
-    degenerate_aa = set(
-        _x_fold_degenerate_aa_from_codon_table(4, table_a)).intersection(
-            set(_x_fold_degenerate_aa_from_codon_table(4, table_b)))
+    ffdc_a = _x_fold_degenerate_aa_from_codon_table(4, table_a)
+    ffdc_b = _x_fold_degenerate_aa_from_codon_table(4, table_b)
+
+    common_ffds = {}
+    for aa in set(ffdc_a).intersection(set(ffdc_b)):
+        for site, codons in ffdc_a[aa].items():
+            if site in ffdc_b[aa]:
+                common_codons = []
+                for codon_set in codons:
+                    if codon_set in ffdc_b[aa][site]:
+                        common_codons.append(codon_set)
+                if common_codons:
+                    common_ffds.setdefault(aa, dict())
+                    common_ffds[aa][site] = common_codons
 
     n_sites = 0
     n_sub = 0
@@ -251,12 +262,12 @@ def substitutions_per_ffds(
             offset_a += 1
         if cb == "-":
             offset_b += 1
-        if ca == cb and ca in degenerate_aa:
+        if ca == cb and ca in common_ffds:
             tra, trb = _triplet(a, i - offset_a), _triplet(b, i - offset_b)
-            subs, locs = _hamming_distance(tra, trb)
-            # in exotic genetic codes it may be possible that
-            # a single aa has two four fold degenerate sites.
-            n_sites += max(subs, 1)
-            n_sub += subs
+            _, locs = _hamming_distance(tra, trb)
+            n_sites += len(common_ffds[ca])
+            for loc in locs:
+                if loc in common_ffds[ca]:
+                    n_sub += 1
 
     return (n_sub, n_sites), truncated
