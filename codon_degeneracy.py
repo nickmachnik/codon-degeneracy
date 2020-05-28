@@ -161,6 +161,21 @@ def _triplet(seq: str, i: int):
     return seq[start:start+3]
 
 
+def _triplet_with_context(seq: str, i: int):
+    """Return the ith triplet in a sequence with the
+    previous and following nucleotide
+
+    Args:
+        seq (str): Sequence
+        i (int): 0-based index of the target triplet.
+
+    Returns:
+        str: The target triplet.
+    """
+    start = i * 3
+    return seq[start-1:start+4]
+
+
 def _aligned_ffds(a: str, b: str, table_a="Standard", table_b="Standard"):
     """Extracts the four-fold degenerate codons at conserved sites
     from a protein sequence alignment of two coding DNA sequences.
@@ -263,11 +278,120 @@ def substitutions_per_ffds(
         if cb == "-":
             offset_b += 1
         if ca == cb and ca in common_ffds:
-            tra, trb = _triplet(a, i - offset_a), _triplet(b, i - offset_b)
-            _, locs = _hamming_distance(tra, trb)
+            triplet_a, triplet_b = _triplet(a, i - offset_a), _triplet(b, i - offset_b)
+            _, locs = _hamming_distance(triplet_a, triplet_b)
             n_sites += len(common_ffds[ca])
             for loc in locs:
                 if loc in common_ffds[ca]:
                     n_sub += 1
 
     return (n_sub, n_sites), truncated
+
+
+def substitutions_per_ffds_by_cpg_context(
+    a: str, b: str, table_a="Standard", table_b="Standard"
+):
+    """Estimates the numbers of neutral substitutions per site by counting
+    the number of substitutions at four fold degenerate sites sites.
+    Differentiates between four fold degenerate sites in different potential
+    CpG contexts: preceded by C and not followed by G (nonCpG), preceded by C
+    but not followed by G (postC), followed by G but not preceded by C (preG),
+    and preceded by C and followed by G (postCpreG).
+
+    Note: the number of sites considered here may be substantially lower than
+          in substitutions_per_ffds, as this function requires the sites
+          preceeding and following site of a four fold degenerate site
+          to be identical in the two aligned sequences.
+
+    See also:
+        Kondrashov FA, Ogurtsov AY, Kondrashov AS. Selection in favor
+        of nucleotidesG and C diversifies evolution rates and levels of
+        polymorphism at mammalian synonymous sites.
+        J Theor Biol. 2006;240(4):616‐626. doi:10.1016/j.jtbi.2005.10.020
+
+    Args:
+        a (str): coding DNA sequence a
+        b (str): coding DNA sequence b
+        table_a (str, optional): NCBI table name as used in Bio.Data.CodonTable
+        table_b (str, optional): NCBI table name as used in Bio.Data.CodonTable
+    """
+
+    def categorize_ffds(qintuplet_a, qintuplet_b, loc):
+        if qintuplet_a[loc - 1] != qintuplet_b[loc - 1]:
+            return None
+        elif qintuplet_a[loc + 1] != qintuplet_b[loc + 1]:
+            return None
+        else:
+            pre, post = qintuplet_a[loc - 1], qintuplet_a[loc + 1]
+
+        if pre == 'C' and post == 'G':
+            return "postCpreG"
+        elif pre == 'C':
+            return "postC"
+        elif post == 'G':
+            return "preG"
+        else:
+            return "nonCpG"
+
+    proteins = []
+    truncated = []
+    for s, table in [[a, table_a], [b, table_b]]:
+        ts = _truncate(s)
+        if not ts:
+            raise ValueError("DNA sequence without ATG codon provided!")
+        else:
+            truncated.append(ts)
+            proteins.append(_translate(ts, table))
+    alignment = _align(*proteins)
+
+    # shorten the input sequences to the aligned subsequences
+    a = truncated[0][alignment[2][0][0]*3:]
+    b = truncated[1][alignment[2][1][0]*3:]
+    alignment_len = len(str(alignment[0][1]))
+
+    ffdc_a = _x_fold_degenerate_aa_from_codon_table(4, table_a)
+    ffdc_b = _x_fold_degenerate_aa_from_codon_table(4, table_b)
+
+    common_ffds = {}
+    for aa in set(ffdc_a).intersection(set(ffdc_b)):
+        for site, codons in ffdc_a[aa].items():
+            if site in ffdc_b[aa]:
+                common_codons = []
+                for codon_set in codons:
+                    if codon_set in ffdc_b[aa][site]:
+                        common_codons.append(codon_set)
+                if common_codons:
+                    common_ffds.setdefault(aa, dict())
+                    common_ffds[aa][site] = common_codons
+
+    subs_and_sites = {
+        "nonCpG": [0, 0],
+        "postC": [0, 0],
+        "preG": [0, 0],
+        "postCpreG": [0, 0]
+    }
+    offset_a, offset_b = 0, 0
+
+    # iterate over the aligned sequences
+    for i, (ca, cb) in enumerate(zip(
+        str(alignment[0][0]), str(alignment[0][1]))
+    ):
+        if ca == "-":
+            offset_a += 1
+        if cb == "-":
+            offset_b += 1
+        if i == 0 or i == alignment_len - 1:
+            continue
+        if ca == cb and ca in common_ffds:
+            qintuplet_a = _triplet_with_context(a, i - offset_a)
+            qintuplet_b = _triplet_with_context(b, i - offset_b)
+            _, locs = _hamming_distance(qintuplet_a[1:4], qintuplet_b[1:4])
+            for loc in common_ffds[ca]:
+                category = categorize_ffds(qintuplet_a, qintuplet_b, loc + 1)
+                if category is None:
+                    continue
+                else:
+                    subs_and_sites[category][1] += 1
+                    subs_and_sites[category][0] += (loc in locs)
+
+    return subs_and_sites
