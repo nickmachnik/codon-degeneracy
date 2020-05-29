@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- `substitutions_per_ffds_by_cpg_context`, which allows to differentiate between different CpG contexts.
+
 ## [0.1.2]
 
 ### Added
