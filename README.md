@@ -2,7 +2,6 @@
 # codon-degeneracy
 ![Python application](https://github.com/nickmachnik/codon-degeneracy/workflows/Python%20application/badge.svg)
 ![License](https://img.shields.io/github/license/nickmachnik/codon-degeneracy)
-![Upload Python Package](https://github.com/nickmachnik/codon-degeneracy/workflows/Upload%20Python%20Package/badge.svg)
 
 This python package provides routines for the extraction of [degenerate sites](https://en.wikipedia.org/wiki/Codon_degeneracy) from sequences and alignments. The latter is particularly useful for estimations of rates of neutral evolution.
 
@@ -21,6 +20,11 @@ git clone https://github.com/nickmachnik/degenerate-sites.git [TARGET DIR]
 and then install  via pip
 ```
 pip install [TARGET DIR]
+```
+
+or install directly from PyPI (this won't include unreleased changes as specified in the [changelog](CHANGELOG.md)):
+```
+pip install expected-levenshtein
 ```
 
 ## Testing
