@@ -29,6 +29,8 @@ def read_file(filename):
 
 
 setup(
+    author='Nick Noel Machnik',
+    author_email='nick.machnik@gmail.com',
     name='codon-degeneracy',
     version=__version__,
     description="""
