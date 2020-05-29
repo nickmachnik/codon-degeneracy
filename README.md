@@ -31,7 +31,11 @@ cd [TARGET DIR]
 python -m unittest
 ```
 
-## Getting started
+## Usage
+
+There are more useful and well documented functions under the hood than shown here, which I enourage to explore by browsing the code.
+
+### Counting substitutions per four fold degenerate site
 
 One of the main features of the package is the counting of neutral substitutions at four fold degenerate sites.
 This is best done with known orthologue pairs between species.
@@ -58,7 +62,24 @@ as start.
 > NOTE: The numbers of neutral substitutions per site reported by this function are merely a lower bound,
 > as they do not include the possibility of multiple substitutions per site.
 
-There are more useful and well documented functions under the hood, which I enourage to explore by browsing the code.
+### Substitutions at four fold degenerate sites separated by CpG context
+
+In certain situations, it may be useful to differentiate between four fold degenerate sites
+that could potentially exist in a CpG context and could therefore exhibit an elevated
+mutation rate and those that do not. `substitutions_per_ffds_by_cpg_context` provides that
+functionality.
+It differentiates between four CpG contexts. Sites that areL
+    - preceded by C and not followed by G (nonCpG)
+    - preceded by C but not followed by G (postC)
+    - followed by G but not preceded by C (preG)
+    - preceded by C and followed by G (postCpreG)
+
+> Note: the number of sites considered here may be substantially lower than
+> in `substitutions_per_ffds`, as this function requires the sites
+> preceeding and following site of a four fold degenerate site
+> to be identical in the two aligned sequences.
+
+The function can be used in exactly the same that is shown for `substitutions_per_ffds` above.
 
 ## License
 
