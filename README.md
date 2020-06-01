@@ -72,7 +72,7 @@ In certain situations, it may be useful to differentiate between four fold degen
 that could potentially exist in a CpG context and could therefore exhibit an elevated
 mutation rate and those that do not. `substitutions_per_ffds_by_cpg_context` provides that
 functionality.
-It differentiates between four CpG contexts. Sites that areL
+It differentiates between four CpG contexts. Sites that are:
     - preceded by C and not followed by G (nonCpG)
     - preceded by C but not followed by G (postC)
     - followed by G but not preceded by C (preG)
