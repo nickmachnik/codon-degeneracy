@@ -14,7 +14,7 @@ This code uses [biopython](https://biopython.org/) and [scikit-bio](http://sciki
 Simply clone this repo:
 
 ```
-git clone https://github.com/nickmachnik/degenerate-sites.git [TARGET DIR]
+git clone https://github.com/nickmachnik/codon-degeneracy.git [TARGET DIR]
 ```
 
 and then install  via pip
@@ -24,7 +24,7 @@ pip install [TARGET DIR]
 
 or install directly from PyPI (this won't include unreleased changes as specified in the [changelog](CHANGELOG.md)):
 ```
-pip install expected-levenshtein
+pip install codon-degeneracy
 ```
 
 ## Testing
